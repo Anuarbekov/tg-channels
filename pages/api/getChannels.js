@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
+import { ConnectMongo, DisconnectMongo } from "../../utils/workMongo";
 export default async function getChannels(req, res) {
-  await mongoose.connect(
-    "mongodb+srv://meir:Anuarbekov2006@cluster0.afj8j1d.mongodb.net/Channels?retryWrites=true&w=majority"
-  );
+  await ConnectMongo();
   const channels = mongoose.models.channels;
   try {
     const channelsInfo = await channels.find();
+    await DisconnectMongo();
     await res.json(channelsInfo);
   } catch (e) {
+    await DisconnectMongo();
     await res.json(e);
   }
 }

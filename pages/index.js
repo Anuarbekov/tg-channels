@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Card from "../components/Card";
+import ErrorCard from "../components/ErrorCard";
 export default function Home() {
   const [channels, setChannels] = useState([]);
   useEffect(() => {
@@ -9,18 +11,23 @@ export default function Home() {
     });
   }, [channels]);
   return (
-    <div>
+    <div className="main">
       <Head>
         <title>Telegram Channels</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
-      {channels?.map((channel) => (
-        <>
-          <h3>{channel.title}</h3>
-          <h4>{channel.all_users} in channel</h4>
-          <h4>{channel.online_users} online</h4>
-        </>
-      ))}
+      {channels != [{}] ? (
+        channels.map((channel) => (
+          <Card
+            _id={channel._id}
+            title={channel.title}
+            all_users={channel.all_users}
+            online_users={channel.online_users}
+            total_messages={channel.total_messages}
+          />
+        ))
+      ) : (
+        <ErrorCard />
+      )}
     </div>
   );
 }

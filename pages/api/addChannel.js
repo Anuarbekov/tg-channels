@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
+import { ConnectMongo, DisconnectMongo } from "../../utils/workMongo";
 export default async function addChannel(req, res) {
   const { title, all_users, online_users, total_messages } = req.body;
-  await mongoose.connect(
-    "mongodb+srv://meir:Anuarbekov2006@cluster0.afj8j1d.mongodb.net/Channels?retryWrites=true&w=majority"
-  );
+  await ConnectMongo();
   const channelSchema = new Schema({
-    title: String,
-    all_users: Number,
-    online_users: Number,
-    total_messages: Number,
+    title: { type: String, required: true },
+    all_users: { type: Number, required: true },
+    online_users: { type: Number, required: true },
+    total_messages: { type: Number, required: true },
   });
   const channels =
     mongoose.models.channels || mongoose.model("channels", channelSchema);
@@ -19,7 +18,8 @@ export default async function addChannel(req, res) {
     online_users: online_users,
     total_messages: total_messages,
   });
-  channel.save().then(() => {
+  channel.save().then(async () => {
+    await DisconnectMongo();
     res.status(200).send("Added!");
   });
 }
